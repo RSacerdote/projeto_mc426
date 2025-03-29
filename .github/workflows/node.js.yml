@@ -36,20 +36,16 @@ jobs:
     steps:
     - name: 📥 Code Checkout
       uses: actions/checkout@v4
-      with:
-        working-directory: ./backend
       
     - name: 🟢 Node.js Setup
       uses: actions/setup-node@v4
       with:
-        working-directory: ./backend
+        cache-dependency-path: '**/backend/package-lock.json'
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         
     - name: 📦 Install packages
       run: npm ci
-      working-directory: ./backend
       
     - name: 🔍 Run tests
       run: npm test
-      working-directory: ./backend

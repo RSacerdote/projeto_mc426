@@ -11,7 +11,11 @@
     "dev": "node index.js"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "express": "^4.21.2",
     "jest": "^29.7.0"
+  },
+  "devDependencies": {
+    "supertest": "^7.1.0"
   }
 }

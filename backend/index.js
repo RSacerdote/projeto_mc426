@@ -1,5 +1,5 @@
-const express = require('express');
-const bcrypt = require('bcrypt'); // For password hashing
+import express from 'express';
+import bcrypt from 'bcrypt'; // For password hashing
 const app = express();
 const port = 3000;
 
@@ -30,10 +30,10 @@ app.post('/signup', async (req, res) => {
   }
 });
 
-if(require.main === module) {
-  // If this file is run directly, start the server
+if (import.meta.url === `file://${process.argv[1]}`) {
   app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
   });
 }
-module.exports = app; // Export the app for testing
+
+export default app;

@@ -1,6 +1,6 @@
-const request = require('supertest');
-const express = require('express');
-const app = require('../index'); // Import your app
+import request from 'supertest';
+import express from 'express';
+import app from '../index.js'; // Import your app
 
 describe('Signup Endpoint', () => {
   it('should return 201 when a user signs up successfully', async () => {

@@ -18,4 +18,19 @@ describe('Signup Endpoint', () => {
     expect(response.status).toBe(400);
     expect(response.body.message).toBe('Email and password are required');
   });
+
+  it('should return 409 when trying to sign up with an existing email', async () => {
+    // First signup
+    await request(app)
+      .post('/signup')
+      .send({ email: 'duplicate@example.com', password: 'password123' });
+
+    // Second signup with the same email
+    const response = await request(app)
+      .post('/signup')
+      .send({ email: 'duplicate@example.com', password: 'password123' });
+
+    expect(response.status).toBe(409);
+    expect(response.body.message).toBe('User already exists');
+  });
 });

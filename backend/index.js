@@ -17,6 +17,11 @@ app.post('/signup', async (req, res) => {
   }
 
   try {
+    const userExists = users.some(user => user.email === email);
+    if (userExists) {
+      return res.status(409).json({ message: 'User already exists' });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10); // Hash password
     users.push({ email, password: hashedPassword }); // Store user
     res.status(201).json({ message: 'User created successfully' });

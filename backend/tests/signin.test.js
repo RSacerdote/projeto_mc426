@@ -1,8 +1,8 @@
 import request from 'supertest';
-import app from './index.js';
+import app from '../index.js';
 
 describe('Signin Endpoint', () => {
-  const user = { email: 'teste@email.com', password: 'Senha123' };
+  const user = { email: 'user@email.com', password: 'rightPass' };
 
   // First, register the user before signin tests
   beforeAll(async () => {
@@ -18,7 +18,7 @@ describe('Signin Endpoint', () => {
   it('should return 404 if user does not exist', async () => {
     const res = await request(app)
       .post('/signin')
-      .send({ email: 'notfound@example.com', password: 'anyPass' });
+      .send({ email: 'notfound@email.com', password: 'anyPass' });
     expect(res.statusCode).toBe(404);
     expect(res.body.message).toBe('User not found');
   });

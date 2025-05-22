@@ -1,4 +1,9 @@
 import bcrypt from 'bcrypt';
+import PhysicalRewardFactory from '../factories/PhysicalRewardFactory.js';
+import DigitalRewardFactory from '../factories/DigitalRewardFactory.js';
+
+const physicalRewardFactory = new PhysicalRewardFactory();
+const digitalRewardFactory = new DigitalRewardFactory();
 
 const users = [];
 
@@ -14,6 +19,18 @@ const tasks = [{
   description: 'Description for Task 1',
   credits: 10,
 }];
+
+export function createPhysicalReward(req, res) {
+  const { name, pointsRequired, startDate, endDate, shippingAddress } = req.body;
+  const reward = physicalRewardFactory.createReward(name, pointsRequired, startDate, endDate, shippingAddress);
+  res.status(201).send(reward);
+}
+
+export function createDigitalReward(req, res) {
+  const { name, pointsRequired, startDate, endDate, email } = req.body;
+  const reward = digitalRewardFactory.createReward(name, pointsRequired, startDate, endDate, email);
+  res.status(201).send(reward);
+}
 
 export function getTasks(req, res) {
   res.status(200).send(tasks)

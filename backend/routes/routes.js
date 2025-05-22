@@ -2,9 +2,11 @@ import { Router } from "express"
 import { completeTask, createTask, getBikeRacks, getTask, getTasks, signIn, signUp } from "../controllers/controllers.js";
 import { validateSchema } from "../middlewares/validateSchema.js";
 import { authSchema, completeTaskSchema, postTaskSchema } from "../schemas/schemas.js";
+import rewardsRoutes from './rewardsRoutes.js';
 
 const router = Router()
 
+router.use(rewardsRoutes);
 router.get('/tasks', getTasks);
 router.get('/tasks/:taskId', getTask);
 router.post('/tasks', validateSchema(postTaskSchema), createTask);

@@ -13,7 +13,7 @@ O objetivo é melhorar a mobilidade no campus, facilitar o uso de bicicletas e e
 
 ### 1. Diagrama de Componentes (C4 - Nível 3)
 
-[Diagrama C4 - Nível 3](inserir caminho pra imagem)
+![Diagrama C4 - Nível 3](./assets/images/c4-diagram-level3.png)
 
 ### 2. Estilo Arquitetural
 

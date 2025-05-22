@@ -1,12 +1,25 @@
 import express from 'express';
+import cors from 'cors'; // Importa o middleware CORS
 import bcrypt from 'bcrypt'; // For password hashing
+
 const app = express();
 const port = 3000;
 
+app.use(cors()); // Permite requisições de origens diferentes
 app.use(express.json()); // Middleware to parse JSON request bodies
 
 // Temporary in-memory user storage
 const users = [];
+
+const bikeRacks = [
+  { id: 1, name: 'Bicicletário Central', location: { lat: -22.817, lng: -47.068 }, availableSpots: 10 },
+  { id: 2, name: 'Bicicletário Biblioteca', location: { lat: -22.818, lng: -47.065 }, availableSpots: 5 },
+  { id: 3, name: 'Bicicletário Engenharia', location: { lat: -22.819, lng: -47.070 }, availableSpots: 8 },
+];
+
+app.get('/bike-racks', (req, res) => {
+  res.status(200).json(bikeRacks);
+});
 
 // Signup endpoint
 app.post('/signup', async (req, res) => {

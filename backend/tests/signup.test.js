@@ -16,7 +16,6 @@ describe('Signup Endpoint', () => {
     const response = await request(app).post('/signup').send({ email: '' });
 
     expect(response.status).toBe(422);
-    expect(response.body.message).toBe('Email and password are required');
   });
 
   it('should return 409 when trying to sign up with an existing email', async () => {

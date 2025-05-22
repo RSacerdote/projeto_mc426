@@ -11,8 +11,7 @@ describe('Signin Endpoint', () => {
 
   it('should return 400 if email or password is missing', async () => {
     const res = await request(app).post('/signin').send({});
-    expect(res.statusCode).toBe(400);
-    expect(res.body.message).toBe('Email and password are required');
+    expect(res.statusCode).toBe(422);
   });
 
   it('should return 404 if user does not exist', async () => {

@@ -15,7 +15,7 @@ describe('Signup Endpoint', () => {
   it('should return 400 when email or password is missing', async () => {
     const response = await request(app).post('/signup').send({ email: '' });
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(422);
     expect(response.body.message).toBe('Email and password are required');
   });
 

@@ -137,8 +137,10 @@ app.post('/tasks', validateSchema(postTaskSchema), createTask);
 
 app.post('/tasks/:taskId/complete', validateSchema(completeTaskSchema), completeTask);
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+if (import.meta.url === `file://${process.argv[1]}`) {
+  app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+  });
+}
 
 export default app

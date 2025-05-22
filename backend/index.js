@@ -140,3 +140,5 @@ app.post('/tasks/:taskId/complete', validateSchema(completeTaskSchema), complete
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+
+export default app

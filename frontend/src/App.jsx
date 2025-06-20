@@ -34,6 +34,8 @@ function App() {
   }, []);
 
   const handleMapClick = (latlng) => {
+    console.log(`Ponto clicado -> Latitude: ${latlng.lat}, Longitude: ${latlng.lng}`);
+
     if (!origin) {
       setOrigin(latlng);
       setRoute([]); // Limpa rota anterior
@@ -95,7 +97,15 @@ function App() {
         <MapEventsHandler onMapChange={fetchBikeRacks} onMapClick={handleMapClick} />
 
         {/* Marcadores de bicicletário */}
-        {bikeRacks.map(rack => <Marker key={rack.id} position={rack.location} icon={bikeIcon}><Popup>{rack.name}</Popup></Marker>)}
+        {bikeRacks.map(rack => (
+          <Marker key={rack.id} position={rack.location} icon={bikeIcon}>
+            <Popup>
+              <strong>{rack.name}</strong>
+              <br />
+              Vagas disponíveis: {rack.availableSpots}
+            </Popup>
+          </Marker>
+        ))}
 
         {/* Marcadores de Origem e Destino */}
         {origin && <Marker position={origin}><Popup>Origem</Popup></Marker>}

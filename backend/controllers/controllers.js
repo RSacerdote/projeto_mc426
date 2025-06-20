@@ -9,9 +9,17 @@ const digitalRewardFactory = new DigitalRewardFactory();
 const users = [];
 
 const bikeRacks = [
-  { id: 1, name: 'Bicicletário Central', location: { lat: -22.817, lng: -47.068 }, availableSpots: 10 },
-  { id: 2, name: 'Bicicletário Biblioteca', location: { lat: -22.818, lng: -47.065 }, availableSpots: 5 },
-  { id: 3, name: 'Bicicletário Engenharia', location: { lat: -22.819, lng: -47.070 }, availableSpots: 8 },
+  { id: 1, name: 'Bicicletário Praça Central', location: { lat: -22.818003256227556, lng: -47.06962203506351 }, availableSpots: 10 },
+  { id: 2, name: 'Bicicletário Biblioteca (BC)', location: { lat: -22.816430360289175, lng: -47.07138762234971 }, availableSpots: 5 },
+  { id: 3, name: 'Bicicletário Engenharia Mecânica', location: { lat: -22.820034971899805, lng: -47.06608102530479 }, availableSpots: 8 },
+  { id: 4, name: 'Bicicletário Inst. de Computação (IC)', location: { lat: -22.813694234447546, lng: -47.0639091153389 }, availableSpots: 12 },
+  { id: 5, name: 'Bicicletário Ed. Física (FEF)', location: { lat: -22.815144741845387, lng: -47.072712200496504 }, availableSpots: 7 },
+  { id: 6, name: 'Bicicletário Restaurante Univ. (RU)', location: { lat: -22.817543407104687, lng: -47.07159686208948 }, availableSpots: 20 },
+  { id: 7, name: 'Bicicletário Ciclo Básico (CB)', location: { lat: -22.817404957602264, lng: -47.068967564305325 }, availableSpots: 18 },
+  { id: 8, name: 'Bicicletário Ciências Médicas (FCM)', location: { lat: -22.829894514076685, lng: -47.06271183370368 }, availableSpots: 15 },
+  { id: 9, name: 'Bicicletário Ciclo Básico (PB)', location: { lat: -22.817380234462032, lng: -47.0706687060641 }, availableSpots: 14 },
+  { id: 10, name: 'Bicicletário Inst. Educação (IE)', location: { lat: -22.81562437783783, lng: -47.0650565057307 }, availableSpots: 10 },
+  { id: 11, name: 'Bicicletário Inst. de Física (IFGW)', location: { lat: -22.817340175239323, lng: -47.06652671098709 }, availableSpots: 0 }
 ];
 
 const tasks = [{

@@ -1,54 +1,62 @@
-import { useState, useEffect} from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+// frontend/src/App.jsx - Com Título do Projeto
+import { useState, useEffect, useCallback } from 'react';
+import './App.css';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import { bikeIcon } from './leafletIcons'; // Importando nosso ícone personalizado
+
+// Componente auxiliar para lidar com os eventos do mapa
+function MapEventsHandler({ onMapChange }) {
+  const map = useMapEvents({
+    // Eventos que disparam a busca de dados
+    load: () => onMapChange(map.getBounds()),
+    moveend: () => onMapChange(map.getBounds()),
+  });
+  return null; // Este componente não renderiza nada
+}
 
 function App() {
+  const position = [-22.817, -47.068];
+  const [bikeRacks, setBikeRacks] = useState([]);
 
-  const position = [-22.817, -47.068]; // Coordenadas iniciais do campus
-  const [count, setCount] = useState(0)
-  const [bikeRacks, setBikeRacks] = useState([]); // Estado para armazenar os dados dos bicicletários
+  // Usamos o useCallback para evitar que a função seja recriada em toda renderização
+  const fetchBikeRacks = useCallback((bounds) => {
+    const url = new URL('http://localhost:3000/bike-racks');
+    url.searchParams.append('north', bounds.getNorth());
+    url.searchParams.append('south', bounds.getSouth());
+    url.searchParams.append('east', bounds.getEast());
+    url.searchParams.append('west', bounds.getWest());
 
-  // Fetch dos dados dos bicicletários
-  useEffect(() => {
-    fetch('http://localhost:3000/bike-racks') // Certifique-se de que o backend está rodando
+    console.log(`Buscando bicicletários em: ${url.toString()}`);
+
+    fetch(url)
       .then((response) => response.json())
-      .then((data) => setBikeRacks(data))
+      .then((data) => {
+        console.log("Dados recebidos:", data);
+        setBikeRacks(data);
+      })
       .catch((error) => console.error('Erro ao buscar bicicletários:', error));
   }, []);
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="app-header">
+        <h1>Projeto de Mobilidade Ativa Unicamp</h1>
+        <p>Encontre bicicletários e planeje suas rotas no campus.</p>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
 
-      <MapContainer center={position} zoom={15} style={{ height: '500px', width: '100%' }}>
+      <MapContainer center={position} zoom={15}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
+
+        {/* Componente que observa o mapa e chama a função de busca */}
+        <MapEventsHandler onMapChange={fetchBikeRacks} />
+
+        {/* Mapeamento dos bicicletários com o ícone personalizado */}
         {bikeRacks.map((rack) => (
-          <Marker key={rack.id} position={[rack.location.lat, rack.location.lng]}>
+          <Marker key={rack.id} position={[rack.location.lat, rack.location.lng]} icon={bikeIcon}>
             <Popup>
               <strong>{rack.name}</strong>
               <br />
@@ -58,7 +66,7 @@ function App() {
         ))}
       </MapContainer>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

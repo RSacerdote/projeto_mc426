@@ -112,5 +112,15 @@ export async function signIn(req, res) {
 }
 
 export function getBikeRacks(req, res) {
+    const { north, south, east, west } = req.query;
+
+    if (north && south && east && west) {
+        const visibleRacks = bikeRacks.filter(rack => {
+            const { lat, lng } = rack.location;
+            return lat <= north && lat >= south && lng <= east && lng >= west;
+        });
+        return res.status(200).json(visibleRacks);
+    }
+    
     res.status(200).json(bikeRacks);
 }

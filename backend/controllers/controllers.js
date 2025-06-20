@@ -1,3 +1,4 @@
+import axios from 'axios';
 import bcrypt from 'bcrypt';
 import PhysicalRewardFactory from '../factories/PhysicalRewardFactory.js';
 import DigitalRewardFactory from '../factories/DigitalRewardFactory.js';
@@ -123,4 +124,39 @@ export function getBikeRacks(req, res) {
     }
     
     res.status(200).json(bikeRacks);
+}
+
+export async function getRoute(req, res) {
+  const { start, end } = req.query;
+
+  if (!start || !end) {
+    return res.status(400).send({ error: 'Coordenadas de início e fim são obrigatórias.' });
+  }
+
+  try {
+    const response = await axios.get(
+      'https://api.openrouteservice.org/v2/directions/cycling-road',
+      {
+        params: {
+          api_key: process.env.ORS_API_KEY,
+          start: start,
+          end: end,
+        },
+        headers: {
+          // CORREÇÃO: 'utf-h8' foi corrigido para 'utf-8'
+          'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
+        },
+      }
+    );
+
+    const coordinates = response.data.features[0].geometry.coordinates;
+    const invertedCoordinates = coordinates.map(coord => [coord[1], coord[0]]);
+
+    res.status(200).json(invertedCoordinates);
+
+  } catch (error) {
+    // Este bloco agora nos dará um erro mais detalhado se a chave de API estiver errada, por exemplo
+    console.error('Erro ao buscar rota do ORS:', error.response ? error.response.data : error.message);
+    res.status(500).send({ error: 'Não foi possível calcular a rota.' });
+  }
 }

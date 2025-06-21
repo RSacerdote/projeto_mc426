@@ -1,13 +1,13 @@
-// frontend/src/App.jsx - Com Planejamento de Rota
+// frontend/src/App.jsx - Versão final corrigida
 import { useState, useCallback } from 'react';
 import './App.css';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { bikeIcon } from './leafletIcons';
 
-// Componente para lidar com eventos do mapa (bicicletários e cliques)
+// Componente para lidar com eventos do mapa
 function MapEventsHandler({ onMapChange, onMapClick }) {
-  useMapEvents({
+  const map = useMapEvents({
     load: (e) => onMapChange(e.target.getBounds()),
     moveend: (e) => onMapChange(e.target.getBounds()),
     click: (e) => onMapClick(e.latlng),
@@ -18,11 +18,12 @@ function MapEventsHandler({ onMapChange, onMapClick }) {
 function App() {
   const position = [-22.817, -47.068];
   const [bikeRacks, setBikeRacks] = useState([]);
-
+  
   // Estados para o planejamento de rota
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
   const [route, setRoute] = useState([]);
+  const [distance, setDistance] = useState(0); // Estado para a distância
 
   const fetchBikeRacks = useCallback((bounds) => {
     const url = new URL('http://localhost:3000/bike-racks');
@@ -35,52 +36,49 @@ function App() {
 
   const handleMapClick = (latlng) => {
     console.log(`Ponto clicado -> Latitude: ${latlng.lat}, Longitude: ${latlng.lng}`);
-
     if (!origin) {
       setOrigin(latlng);
-      setRoute([]); // Limpa rota anterior
+      setRoute([]); // Limpa apenas a rota anterior, mantendo a nova origem
+      setDistance(0);
     } else if (!destination) {
       setDestination(latlng);
-      // Temos origem e destino, vamos buscar a rota
       fetchRoute(origin, latlng);
     }
   };
 
   const fetchRoute = (start, end) => {
-  // Cria a URL base
-  const url = new URL('http://localhost:3000/route');
-
-  // Adiciona os parâmetros de forma segura
-  url.searchParams.append('start', `${start.lng},${start.lat}`);
-  url.searchParams.append('end', `${end.lng},${end.lat}`);
-
-  console.log(`Buscando rota: ${url.toString()}`); // Agora a URL estará correta
-
-  fetch(url)
-    .then(res => {
-      if (!res.ok) {
-        throw new Error(`O backend retornou um erro: ${res.status}`);
-      }
-      return res.json();
-    })
-    .then(data => {
-      if (data.error) {
-        console.error(data.error);
-        alert("Não foi possível encontrar uma rota.");
-      } else {
-        setRoute(data);
-      }
-    })
-    .catch((error) => {
-      console.error("Erro ao buscar rota:", error);
-      alert(`Erro ao buscar rota: ${error.message}`);
-    });
-};
+    const url = new URL('http://localhost:3000/route');
+    url.searchParams.append('start', `${start.lng},${start.lat}`);
+    url.searchParams.append('end', `${end.lng},${end.lat}`);
+    
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        // No backend, já alteramos para retornar um objeto
+        setRoute(data.coordinates); 
+        setDistance(data.distance);
+      })
+      .catch((error) => {
+        alert(`Erro ao buscar rota: ${error.message}`);
+        clearRoute();
+      });
+  };
 
   const clearRoute = () => {
     setOrigin(null);
     setDestination(null);
     setRoute([]);
+    setDistance(0);
+  };
+  
+  const formatDistance = (meters) => {
+    if (meters < 1000) {
+      return `${Math.round(meters)} m`;
+    }
+    return `${(meters / 1000).toFixed(2)} km`;
   };
 
   return (
@@ -89,29 +87,26 @@ function App() {
         <h1>Projeto de Mobilidade Ativa Unicamp</h1>
         { !origin && <p>Clique no mapa para definir o ponto de <b>origem</b>.</p> }
         { origin && !destination && <p>Origem definida. Clique no mapa para definir o <b>destino</b>.</p> }
-        { route.length > 0 && <button onClick={clearRoute}>Limpar Rota</button> }
+        { route.length > 0 && (
+            <div className="route-info">
+                <span>Distância da Rota: <strong>{formatDistance(distance)}</strong></span>
+                <button onClick={clearRoute}>Limpar Rota</button>
+            </div>
+        )}
       </div>
 
       <MapContainer center={position} zoom={15} style={{ height: '500px', width: '100%' }}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap' />
         <MapEventsHandler onMapChange={fetchBikeRacks} onMapClick={handleMapClick} />
-
-        {/* Marcadores de bicicletário */}
+        
         {bikeRacks.map(rack => (
-          <Marker key={rack.id} position={rack.location} icon={bikeIcon}>
-            <Popup>
-              <strong>{rack.name}</strong>
-              <br />
-              Vagas disponíveis: {rack.availableSpots}
-            </Popup>
+          <Marker key={rack.id} position={[rack.location.lat, rack.location.lng]} icon={bikeIcon}>
+            <Popup><strong>{rack.name}</strong><br />Vagas disponíveis: {rack.availableSpots}</Popup>
           </Marker>
         ))}
 
-        {/* Marcadores de Origem e Destino */}
         {origin && <Marker position={origin}><Popup>Origem</Popup></Marker>}
         {destination && <Marker position={destination}><Popup>Destino</Popup></Marker>}
-
-        {/* Linha da Rota */}
         {route.length > 0 && <Polyline positions={route} color="blue" />}
       </MapContainer>
     </>

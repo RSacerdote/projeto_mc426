@@ -151,19 +151,24 @@ export async function getRoute(req, res) {
           end: end,
         },
         headers: {
-          // CORREÇÃO: 'utf-h8' foi corrigido para 'utf-8'
           'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
         },
       }
     );
 
-    const coordinates = response.data.features[0].geometry.coordinates;
+    const feature = response.data.features[0];
+    const coordinates = feature.geometry.coordinates;
+    const distanceInMeters = feature.properties.summary.distance; // Extraindo a distância
+
     const invertedCoordinates = coordinates.map(coord => [coord[1], coord[0]]);
 
-    res.status(200).json(invertedCoordinates);
+    // Enviando um objeto com as coordenadas E a distância
+    res.status(200).json({
+      coordinates: invertedCoordinates,
+      distance: distanceInMeters 
+    });
 
   } catch (error) {
-    // Este bloco agora nos dará um erro mais detalhado se a chave de API estiver errada, por exemplo
     console.error('Erro ao buscar rota do ORS:', error.response ? error.response.data : error.message);
     res.status(500).send({ error: 'Não foi possível calcular a rota.' });
   }

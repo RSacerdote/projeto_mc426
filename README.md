@@ -1,5 +1,4 @@
 # Projeto de Mobilidade Ativa Unicamp - MC426
-
 O projeto propõe o desenvolvimento de um aplicativo para incentivar a mobilidade ativa dentro do campus da Unicamp. O sistema funcionará por meio da acumulação de créditos conforme o usuário utilizar meios sustentáveis de transporte, como bicicletas ou caminhadas. Além disso, o aplicativo irá mapear bicicletários, indicando a quantidade de bicicletas e vagas disponíveis.
 
 O objetivo é melhorar a mobilidade no campus, facilitar o uso de bicicletas e estimular deslocamentos sustentáveis com um sistema de incentivo.
@@ -53,6 +52,7 @@ Os requisitos foram levantados a partir de uma sessão de brainstorming document
 #### 3. Descrição dos Componentes e Responsabilidades
 
 ##### **Frontend (SPA)**
+
 - **Autenticação**: Gerencia interfaces de login/registro, integrando com backend.
 - **Mapa**: Exibe rotas otimizadas e status de bicicletários em tempo real.   
 - **Comunidade**: Permite visualização e interação com grupos/campanhas. 
@@ -177,4 +177,3 @@ A funcionalidade de cálculo de rotas depende do **OpenRouteService (ORS)**, que
     npm run dev
     ```
     A aplicação frontend estará acessível em `http://localhost:5173` (ou outra porta indicada pelo Vite).
-
